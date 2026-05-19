@@ -1,0 +1,68 @@
+{
+  "navbar": {
+    "brand": "Flight Circle",
+    "subtitle": "Nepal ↔ Australia flights",
+    "search": "Search",
+    "deals": "Deals",
+    "why": "Why Flight Circle",
+    "testimonials": "Testimonials"
+  },
+  "hero": {
+    "badge": "Nepal ↔ Australia routes",
+    "title": "Book flights from Nepal to Australia — and beyond.",
+    "subtitle": "Flight Circle helps travelers from Nepal find and book flights to Australia with clear fares, secure checkout, and local support. Other international destinations are available too.",
+    "cta_search": "Explore flights",
+    "cta_benefits": "View benefits",
+    "featured_route_label": "Featured route",
+    "featured_route": "KTM → SYD",
+    "starting_fare_label": "Approx. starting fare",
+    "starting_fare": "NPR 120,000",
+    "focus_title": "Focused on Nepal → Australia",
+    "focus_text": "Search, compare, and book flights between Nepal and Australia with clear baggage rules, fare breakdowns, and local customer support."
+  },
+  "search": {
+    "title": "Find the flight that fits your schedule and comfort.",
+    "subtitle": "Smart search",
+    "live": "Live",
+    "live_note": "rates updated hourly",
+    "tabs": {
+      "roundtrip": "Round Trip",
+      "oneway": "One Way",
+      "multicity": "Multi-city"
+    },
+    "from": "From",
+    "to": "To",
+    "departure": "Departure",
+    "return": "Return",
+    "travellers": "Travellers",
+    "cabin": "Cabin class",
+    "cabin_options": {
+      "economy": "Economy",
+      "premium": "Premium Economy",
+      "business": "Business",
+      "first": "First"
+    },
+    "search_button": "Search flights"
+  },
+  "ui": {
+    "show_filters": "Show filters",
+    "hide_filters": "Hide filters"
+  },
+  "results": {
+    "title": "Premium flights for your next trip",
+    "loading": "Connecting to the search engine...",
+    "refining": "Refining results with your filters...",
+    "no_matches": "No flights match your selected preferences",
+    "try_relax": "Try relaxing the airline or stop filters, or switch to a broader travel class.",
+    "filters_active": "Filters active",
+    "found": "{count} flights found{route}"
+  },
+  "footer": {
+    "description": "Flight Circle — focused on flights from Nepal to Australia with transparent fares, secure payments, and local customer support in Kathmandu.",
+    "contact_email": "support@flightcircle.com",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "copyright": "© 2026 Flight Circle. Based in Kathmandu — Serving Nepal to Australia and global routes.",
+    "return_to_top": "Return to top"
+  }
+}
