@@ -1,0 +1,6 @@
+[
+  {"city": "Tokyo", "airport": "NRT", "offer": "Best of the East", "image": "bg-gradient-to-br from-slate-800 via-slate-700 to-slate-600"},
+  {"city": "Lisbon", "airport": "LIS", "offer": "Coastal city escapes", "image": "bg-gradient-to-br from-cyan-500 via-sky-500 to-blue-500"},
+  {"city": "Dubai", "airport": "DXB", "offer": "Luxury travel deals", "image": "bg-gradient-to-br from-amber-500 via-orange-500 to-rose-500"},
+  {"city": "Reykjavik", "airport": "KEF", "offer": "Northern lights routes", "image": "bg-gradient-to-br from-indigo-700 via-violet-700 to-fuchsia-700"}
+]
