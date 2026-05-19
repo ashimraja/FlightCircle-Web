@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
-import { Search, Calendar, Users, MapPin, ChevronDown } from "lucide-react";
+import { Search, Calendar, Users, MapPin } from "lucide-react";
+import Select from "./Select";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "../i18n/I18nProvider";
@@ -114,47 +115,43 @@ export default function HeroSearch() {
             <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
               <Users size={16} /> {t("search.travellers")}
             </span>
-            <div className="relative mt-3">
-              <select
+            <div className="mt-3">
+              <Select
+                ariaLabel={t("search.travellers")}
                 value={travellers}
-                onChange={(e) => setTravellers(e.target.value)}
-                className="appearance-none pr-10 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none"
-              >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={String(n)}>
-                  {n} {n === 1 ? "traveller" : "travellers"}
-                </option>
-              ))}
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                <ChevronDown size={16} className="text-slate-400" />
-              </div>
+                onChange={(v: string) => setTravellers(v)}
+                options={[1, 2, 3, 4, 5].map((n) => ({
+                  value: String(n),
+                  label: `${n} ${n === 1 ? t("search.traveller_singular") : t("search.traveller_plural")}`,
+                }))}
+              />
             </div>
           </label>
           <label className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
             <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
               <Search size={16} /> {t("search.cabin")}
             </span>
-            <div className="relative mt-3">
-              <select
+            <div className="mt-3">
+              <Select
+                ariaLabel={t("search.cabin")}
                 value={cabin}
-                onChange={(e) => setCabin(e.target.value)}
-                className="appearance-none pr-10 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none"
-              >
-              <option value="Economy">
-                {t("search.cabin_options.economy")}
-              </option>
-              <option value="Premium Economy">
-                {t("search.cabin_options.premium")}
-              </option>
-              <option value="Business">
-                {t("search.cabin_options.business")}
-              </option>
-              <option value="First">{t("search.cabin_options.first")}</option>
-              </select>
-              <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center">
-                <ChevronDown size={16} className="text-slate-400" />
-              </div>
+                onChange={(v: string) => setCabin(v)}
+                options={[
+                  {
+                    value: "Economy",
+                    label: t("search.cabin_options.economy"),
+                  },
+                  {
+                    value: "Premium Economy",
+                    label: t("search.cabin_options.premium"),
+                  },
+                  {
+                    value: "Business",
+                    label: t("search.cabin_options.business"),
+                  },
+                  { value: "First", label: t("search.cabin_options.first") },
+                ]}
+              />
             </div>
           </label>
         </div>

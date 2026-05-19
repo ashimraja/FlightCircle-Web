@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useFakeApi } from "../hooks/useFakeApi";
-import { flightService } from "../services/flightService";
+import { searchFlightsApi } from "../services/searchService";
 import FlightCard from "../components/FlightCard";
 import FilterSidebar from "../components/FilterSidebar";
 import SortBar from "../components/SortBar";
@@ -43,7 +43,12 @@ export default function SearchResults() {
   const fromParam = query.get("from") || "";
   const toParam = query.get("to") || "";
   const { data: flights, loading } = useFakeApi<Flight[]>(
-    () => flightService.searchFlights(),
+    () =>
+      searchFlightsApi({
+        from: fromParam || undefined,
+        to: toParam || undefined,
+        cabin: initialCabin === "any" ? undefined : initialCabin,
+      }),
     [],
   );
   const [showFilters, setShowFilters] = useState(false);
@@ -99,8 +104,11 @@ export default function SearchResults() {
     if (loading) return t("results.loading");
     if (isRefining) return t("results.refining");
     if (!displayFlights.length) return t("results.no_matches");
-    const routeText = fromParam && toParam ? ` for ${fromParam} → ${toParam}` : "";
-    return t("results.found").replace("{count}", String(displayFlights.length)).replace("{route}", routeText);
+    const routeText =
+      fromParam && toParam ? ` for ${fromParam} → ${toParam}` : "";
+    return t("results.found")
+      .replace("{count}", String(displayFlights.length))
+      .replace("{route}", routeText);
   }, [displayFlights.length, isRefining, loading, t]);
 
   const activeFilterLabels = useMemo(() => {
@@ -137,10 +145,10 @@ export default function SearchResults() {
         <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.24em] text-brand sm:text-sm">
-              {t('search.subtitle')}
+              {t("search.subtitle")}
             </p>
             <p className="mt-1 text-xl font-semibold text-slate-900 sm:mt-2 sm:text-2xl">
-              {t('results.title')}
+              {t("results.title")}
             </p>
             {fromParam && toParam && (
               <p className="mt-1 text-sm text-slate-500">{`${fromParam} → ${toParam}`}</p>
@@ -153,7 +161,7 @@ export default function SearchResults() {
         {activeFilterLabels.length > 0 && !loading && !isRefining && (
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-700">
-              {t('results.filters_active')}
+              {t("results.filters_active")}
             </span>
             {activeFilterLabels.map((label) => (
               <span
@@ -189,7 +197,7 @@ export default function SearchResults() {
             className="flex w-full items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-3 font-semibold text-slate-900 shadow-soft transition hover:border-brand/60"
           >
             <Filter size={18} />
-            {showFilters ? t('ui.hide_filters') : t('ui.show_filters')}
+            {showFilters ? t("ui.hide_filters") : t("ui.show_filters")}
           </button>
           {showFilters && (
             <div className="mt-4">

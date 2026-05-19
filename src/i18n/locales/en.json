@@ -35,6 +35,8 @@
     "departure": "Departure",
     "return": "Return",
     "travellers": "Travellers",
+    "traveller_singular": "traveller",
+    "traveller_plural": "travellers",
     "cabin": "Cabin class",
     "cabin_options": {
       "economy": "Economy",
@@ -56,6 +58,44 @@
     "try_relax": "Try relaxing the airline or stop filters, or switch to a broader travel class.",
     "filters_active": "Filters active",
     "found": "{count} flights found{route}"
+  },
+  "sections": {
+    "trending_deals": {
+      "title": "Trending deals",
+      "description": "Curated deals for Nepal to Australia and other popular international routes."
+    },
+    "popular_destinations": {
+      "title": "Popular destinations",
+      "description": "Popular destinations including Australia routes and nearby international hubs."
+    },
+    "testimonials": {
+      "title": "Testimonials",
+      "description": "What travelers say about Flight Circle's Nepal–Australia service."
+    }
+  },
+  "testimonials": {
+    "badge": "Customer stories",
+    "title": "Trusted by travelers from Nepal",
+    "subtitle": "Hear from customers who booked Nepal–Australia flights through Flight Circle — clear fares, reliable booking, and local support.",
+    "rating_text": "Rated 4.9 out of 5 by our customers",
+    "stats": {
+      "happy_users": "Happy customers",
+      "flights_booked": "Flights booked",
+      "satisfaction": "Satisfaction rate"
+    },
+    "join_title": "Join our community",
+    "join_text": "Share your Flight Circle experience and help us improve",
+    "share_cta": "Share your feedback"
+  },
+  "feedback": {
+    "title": "Share feedback",
+    "name_label": "Your name",
+    "email_label": "Email",
+    "message_label": "Message",
+    "submit": "Send feedback",
+    "submitting": "Sending...",
+    "thanks": "Thanks for your feedback!",
+    "thanks_note": "We appreciate your input and will use it to improve."
   },
   "footer": {
     "description": "Flight Circle — focused on flights from Nepal to Australia with transparent fares, secure payments, and local customer support in Kathmandu.",

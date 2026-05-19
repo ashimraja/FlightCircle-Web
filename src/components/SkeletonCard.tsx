@@ -1,6 +1,8 @@
+import Card from "./ui/Card";
+
 export default function SkeletonCard() {
   return (
-    <div className="animate-pulse rounded-[2rem] border border-slate-200 bg-white p-6 shadow-soft">
+    <Card className="animate-pulse rounded-[2rem] p-6">
       <div className="mb-6 h-5 w-48 rounded-full bg-slate-200" />
       <div className="grid gap-4 sm:grid-cols-3">
         <div className="space-y-3">
@@ -16,6 +18,6 @@ export default function SkeletonCard() {
           <div className="h-12 w-full rounded-full bg-slate-200" />
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

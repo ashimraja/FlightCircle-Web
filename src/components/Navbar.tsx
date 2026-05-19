@@ -1,13 +1,15 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Globe, Menu, X } from "lucide-react";
 import { images } from "../assets";
 import { useI18n } from "../i18n/I18nProvider";
+import Select from "./Select";
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const { t, setLang, lang } = useI18n();
+  const location = useLocation();
 
   const navLinks = [
     { label: t("navbar.search"), href: "/search" },
@@ -35,30 +37,41 @@ export default function Navbar() {
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm text-slate-600 md:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              to={link.href}
-              className="transition hover:text-slate-900"
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navLinks.map((link) => {
+            const isActive =
+              location.pathname === link.href ||
+              (link.href !== "/" && location.pathname.startsWith(link.href));
+
+            return (
+              <Link
+                key={link.href}
+                to={link.href}
+                aria-current={isActive ? "page" : undefined}
+                className={`transition hover:text-slate-900 ${
+                  isActive ? "text-brand border-b-2 border-brand pb-1" : ""
+                }`}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-2 sm:gap-3">
-            <div className="hidden sm:flex items-center gap-2">
-              <Globe size={16} />
-              <select
-                aria-label="Language"
+          <div className="hidden sm:flex items-center gap-2">
+            <Globe size={16} />
+            <div className="w-28">
+              <Select
+                ariaLabel="Language"
                 value={lang}
-                onChange={(e) => setLang(e.target.value)}
-                className="rounded-full border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 transition hover:border-slate-300"
-              >
-                <option value="en">EN</option>
-                <option value="ne">NE</option>
-              </select>
+                onChange={(v) => setLang(v)}
+                options={[
+                  { value: "en", label: "EN" },
+                  { value: "ne", label: "NE" },
+                ]}
+              />
             </div>
+          </div>
           <Link
             to="/search"
             className="hidden rounded-full bg-brand px-5 py-2.5 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-dark sm:inline-flex"
@@ -81,21 +94,40 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div className="border-t border-slate-200/80 bg-white px-6 py-4">
           <nav className="space-y-4 text-sm text-slate-600">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                to={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="block rounded-2xl px-4 py-3 font-medium text-slate-900 transition hover:bg-slate-50"
-              >
-                {link.label}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive =
+                location.pathname === link.href ||
+                (link.href !== "/" && location.pathname.startsWith(link.href));
+
+              return (
+                <Link
+                  key={link.href}
+                  to={link.href}
+                  onClick={() => setMobileMenuOpen(false)}
+                  aria-current={isActive ? "page" : undefined}
+                  className={`block rounded-2xl px-4 py-3 font-medium transition hover:bg-slate-50 ${
+                    isActive ? "text-brand bg-slate-50" : "text-slate-900"
+                  }`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
             <div className="rounded-2xl border-t border-slate-200 pt-4">
-              <button className="flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700 transition hover:border-slate-300">
+              <div className="flex w-full items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-700">
                 <Globe size={16} />
-                EN
-              </button>
+                <div className="w-24">
+                  <Select
+                    ariaLabel="Language"
+                    value={lang}
+                    onChange={(v) => setLang(v)}
+                    options={[
+                      { value: "en", label: "EN" },
+                      { value: "ne", label: "NE" },
+                    ]}
+                  />
+                </div>
+              </div>
             </div>
           </nav>
         </div>

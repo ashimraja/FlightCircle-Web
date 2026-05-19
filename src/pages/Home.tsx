@@ -9,6 +9,7 @@ import TestimonialCard from "../components/TestimonialCard";
 import destinations from "../data/destinations.json";
 import deals from "../data/deals.json";
 import testimonials from "../data/testimonials.json";
+import { useI18n } from "../i18n/I18nProvider";
 
 const benefits = [
   {
@@ -32,6 +33,8 @@ const benefits = [
 ];
 
 export default function Home() {
+  const { t } = useI18n();
+
   return (
     <div className="space-y-12 sm:space-y-16">
       <HeroSearch />
@@ -55,13 +58,13 @@ export default function Home() {
                 to="/search"
                 className="inline-flex items-center justify-center gap-2 rounded-full bg-brand px-5 py-3 text-sm font-semibold text-white shadow-soft transition hover:bg-brand-dark sm:px-6"
               >
-                Explore flights <ArrowRight size={16} />
+                {t("hero.cta_search")} <ArrowRight size={16} />
               </Link>
               <a
                 href="#why"
                 className="inline-flex items-center justify-center gap-2 rounded-full border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:border-brand/40"
               >
-                View benefits
+                {t("hero.cta_benefits")}
               </a>
             </div>
           </div>
@@ -109,8 +112,8 @@ export default function Home() {
 
       <section className="space-y-6 sm:space-y-8" id="deals">
         <SectionHeading
-          title="Trending deals"
-          description="Curated deals for Nepal to Australia and other popular international routes."
+          title={t("sections.trending_deals.title")}
+          description={t("sections.trending_deals.description")}
         />
         <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
           {deals.map((deal) => (
@@ -121,8 +124,8 @@ export default function Home() {
 
       <section className="space-y-6 sm:space-y-8">
         <SectionHeading
-          title="Popular destinations"
-          description="Popular destinations including Australia routes and nearby international hubs."
+          title={t("sections.popular_destinations.title")}
+          description={t("sections.popular_destinations.description")}
         />
         <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
           {destinations.map((destination) => (
@@ -171,8 +174,8 @@ export default function Home() {
 
       <section className="space-y-6 sm:space-y-8" id="testimonials">
         <SectionHeading
-          title="Testimonials"
-          description="What travelers say about Flight Circle's Nepal–Australia service."
+          title={t("sections.testimonials.title")}
+          description={t("sections.testimonials.description")}
         />
         <div className="grid gap-4 sm:gap-6 lg:grid-cols-3">
           {testimonials.map((testimonial) => (

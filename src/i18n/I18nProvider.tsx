@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  useEffect,
+} from "react";
 import en from "./locales/en.json";
 import ne from "./locales/ne.json";
 
@@ -21,7 +27,25 @@ const maps: Record<string, Locales> = { en, ne };
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [lang, setLang] = useState("en");
+  const [lang, setLangState] = useState<string>(() => {
+    try {
+      const stored = localStorage.getItem("fc_lang");
+      return stored || "en";
+    } catch {
+      return "en";
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("fc_lang", lang);
+    } catch {}
+    try {
+      document.documentElement.lang = lang;
+    } catch {}
+  }, [lang]);
+
+  const setLang = (next: string) => setLangState(next);
 
   const t = (key: string) => {
     const parts = key.split(".");
