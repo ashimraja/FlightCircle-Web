@@ -7,7 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 
 const duffel = new Duffel({
-  token: process.env.VITE_DUFFEL_TOKEN,
+  token: process.env.VITE_DUFFEL_TOKEN||'',
 });
 
 // City to IATA code mapping
