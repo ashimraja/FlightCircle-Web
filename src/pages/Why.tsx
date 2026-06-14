@@ -129,11 +129,11 @@ export default function Why() {
               Experience it now <ArrowRight size={16} />
             </Link>
           </div>
-          <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50 p-4 space-y-3 sm:rounded-[1.75rem] sm:p-6 sm:space-y-4">
+          {/* <div className="rounded-[1.25rem] border border-slate-200 bg-slate-50 p-4 space-y-3 sm:rounded-[1.75rem] sm:p-6 sm:space-y-4">
             {[
               { label: "Design approach", value: "Minimalist & premium" },
               { label: "User focus", value: "Travelers first" },
-              { label: "Technology", value: "React + TypeScript" },
+              // { label: "Technology", value: "React + TypeScript" },
               { label: "Philosophy", value: "Less clutter, more clarity" },
             ].map((item) => (
               <div
@@ -148,7 +148,7 @@ export default function Why() {
                 </p>
               </div>
             ))}
-          </div>
+          </div> */}
         </div>
       </section>
     </div>

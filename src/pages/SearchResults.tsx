@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useFakeApi } from "../hooks/useFakeApi";
+import { useApi } from "../hooks/useApi";
 import { searchFlightsApi } from "../services/searchService";
 import FlightCard from "../components/FlightCard";
 import FilterSidebar from "../components/FilterSidebar";
@@ -9,8 +9,6 @@ import type { Flight } from "../types";
 import { Filter, X } from "lucide-react";
 import { useI18n } from "../i18n/I18nProvider";
 import { useLocation } from "react-router-dom";
-
-const allAirlines = ["Aether Air", "Skylark Airlines", "Nimbus", "Voyage"];
 
 type SortOption = "best" | "price" | "duration";
 type StopFilter = "any" | "Non-stop" | "1 stop" | "2+ stops";
@@ -22,7 +20,7 @@ const defaultFilters: {
   travelClass: TravelClass;
 } = {
   stops: "any",
-  airlines: allAirlines,
+  airlines: [], // Will be populated dynamically
   travelClass: "any",
 };
 
@@ -42,23 +40,56 @@ export default function SearchResults() {
   const initialCabin = (query.get("cabin") as TravelClass) || "any";
   const fromParam = query.get("from") || "";
   const toParam = query.get("to") || "";
-  const { data: flights, loading } = useFakeApi<Flight[]>(
-    () =>
+  const departParam = query.get("depart") || "";
+  const retParam = query.get("ret") || undefined;
+  const travellersParam = query.get("travellers") || "1";
+
+  // Create operation function that's memoized to avoid unnecessary re-renders
+  const searchOperation = useMemo(() => {
+    if (!fromParam || !toParam || !departParam) return null;
+    
+    return () =>
       searchFlightsApi({
-        from: fromParam || undefined,
-        to: toParam || undefined,
+        from: fromParam,
+        to: toParam,
+        depart: departParam,
+        ret: retParam,
+        travellers: travellersParam,
         cabin: initialCabin === "any" ? undefined : initialCabin,
-      }),
+      });
+  }, [fromParam, toParam, departParam, retParam, travellersParam, initialCabin]);
+
+  const { data: flights, loading, error } = useApi<Flight[]>(
+    searchOperation,
     [],
+    { retries: 2, retryDelay: 1000 }
   );
+
   const [showFilters, setShowFilters] = useState(false);
   const [sortBy, setSortBy] = useState<SortOption>("best");
+  
+  // Dynamically set available airlines from fetched flights
+  const availableAirlines = useMemo(() => {
+    const airlines = new Set(flights.map(f => f.airline));
+    return Array.from(airlines).sort();
+  }, [flights]);
+
   const [filters, setFilters] = useState({
     ...defaultFilters,
+    airlines: availableAirlines,
     travelClass: initialCabin,
   });
+
   const [isRefining, setIsRefining] = useState(false);
   const firstRender = useRef(true);
+
+  // Update available airlines when flights change
+  useEffect(() => {
+    setFilters(current => ({
+      ...current,
+      airlines: availableAirlines.length > 0 ? availableAirlines : current.airlines,
+    }));
+  }, [availableAirlines]);
 
   const displayFlights = useMemo(() => {
     if (!flights) return [];
@@ -71,11 +102,9 @@ export default function SearchResults() {
 
         const matchesClass =
           filters.travelClass === "any" ||
-          (filters.travelClass === "Economy" && flight.price <= 380) ||
-          (filters.travelClass === "Premium Economy" &&
-            flight.price > 380 &&
-            flight.price <= 500) ||
-          (filters.travelClass === "Business" && flight.price > 500);
+          (filters.travelClass === "Economy" && flight.cabinClass === "economy") ||
+          (filters.travelClass === "Premium Economy" && flight.cabinClass === "premium_economy") ||
+          (filters.travelClass === "Business" && flight.cabinClass === "business");
 
         return matchesStops && matchesAirline && matchesClass;
       })
@@ -83,7 +112,9 @@ export default function SearchResults() {
         if (sortBy === "price") return a.price - b.price;
         if (sortBy === "duration")
           return parseDuration(a.duration) - parseDuration(b.duration);
-        return b.rating - a.rating || a.price - b.price;
+        // For "best", sort by price but prefer non-stop flights
+        const stopDiff = (a.stops === "Non-stop" ? 0 : 1) - (b.stops === "Non-stop" ? 0 : 1);
+        return stopDiff !== 0 ? stopDiff : a.price - b.price;
       });
   }, [flights, filters, sortBy]);
 
@@ -102,6 +133,7 @@ export default function SearchResults() {
 
   const summaryText = useMemo(() => {
     if (loading) return t("results.loading");
+    if (error) return `Error: ${error}`;
     if (isRefining) return t("results.refining");
     if (!displayFlights.length) return t("results.no_matches");
     const routeText =
@@ -109,16 +141,16 @@ export default function SearchResults() {
     return t("results.found")
       .replace("{count}", String(displayFlights.length))
       .replace("{route}", routeText);
-  }, [displayFlights.length, isRefining, loading, t]);
+  }, [displayFlights.length, isRefining, loading, error, t]);
 
   const activeFilterLabels = useMemo(() => {
     const labels: string[] = [];
     if (filters.stops !== "any") labels.push(filters.stops);
-    if (filters.airlines.length !== allAirlines.length)
+    if (filters.airlines.length !== availableAirlines.length && filters.airlines.length > 0)
       labels.push(...filters.airlines);
     if (filters.travelClass !== "any") labels.push(filters.travelClass);
     return labels;
-  }, [filters]);
+  }, [filters, availableAirlines.length]);
 
   const handleStopsChange = (value: StopFilter) => {
     setFilters((current) => ({ ...current, stops: value }));
@@ -129,7 +161,7 @@ export default function SearchResults() {
       const next = current.airlines.includes(airline)
         ? current.airlines.filter((item) => item !== airline)
         : [...current.airlines, airline];
-      return { ...current, airlines: next.length ? next : allAirlines };
+      return { ...current, airlines: next.length ? next : availableAirlines };
     });
   };
 
@@ -137,7 +169,11 @@ export default function SearchResults() {
     setFilters((current) => ({ ...current, travelClass: value }));
   };
 
-  const handleClearFilters = () => setFilters({ ...defaultFilters });
+  const handleClearFilters = () => setFilters({ 
+    ...defaultFilters, 
+    airlines: availableAirlines,
+    travelClass: initialCabin,
+  });
 
   return (
     <div className="space-y-6 sm:space-y-8">

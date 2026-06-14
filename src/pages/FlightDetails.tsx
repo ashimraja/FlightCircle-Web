@@ -107,15 +107,15 @@ export default function FlightDetails() {
             <div className="mt-4 space-y-3 text-xs text-slate-600 sm:mt-6 sm:space-y-4 sm:text-sm">
               <div className="flex items-center justify-between">
                 <span>Base fare</span>
-                <span className="font-semibold">{formatCurrency(flight.price - 42)}</span>
+                <span className="font-semibold">{formatCurrency(flight.baseFare)}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span>Taxes and fees</span>
-                <span className="font-semibold">{formatCurrency(42)}</span>
+                <span className="font-semibold">{formatCurrency(flight.taxAmount)}</span>
               </div>
               <div className="rounded-2xl bg-slate-50 p-3 text-slate-800 sm:rounded-3xl sm:p-4">
                 <div className="flex items-center justify-between text-xs font-semibold sm:text-sm">
-                  <span>Total</span>
+                  <span>Total ({flight.currency})</span>
                   <span>{formatCurrency(flight.price)}</span>
                 </div>
               </div>
@@ -132,11 +132,14 @@ export default function FlightDetails() {
           <div className="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4 shadow-soft sm:rounded-[2rem] sm:p-6">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-500 sm:text-sm">Refund policy</p>
             <p className="mt-3 text-xs leading-5 text-slate-600 sm:mt-4 sm:text-sm sm:leading-6">
-              Flexible fare allows date updates until 24 hours before departure. Refunds are handled according to airline policy.
+              {flight.refundable 
+                ? "This flight offers flexible refunds. You can modify your booking or request a refund within 24 hours of departure."
+                : "This is a non-refundable ticket. You may be able to modify your booking before departure according to the airline's policy."
+              }
             </p>
             <div className="mt-3 inline-flex items-center gap-2 rounded-full bg-white px-3 py-2 text-xs text-slate-700 shadow-sm sm:mt-4 sm:px-4 sm:py-2 sm:text-sm">
-              <CheckCircle2 size={14} className="text-brand flex-shrink-0" />
-              Simple and transparent
+              <CheckCircle2 size={14} className={flight.refundable ? "text-green-600 flex-shrink-0" : "text-brand flex-shrink-0"} />
+              {flight.refundable ? "Refundable ticket" : "Non-refundable ticket"}
             </div>
           </div>
         </aside>

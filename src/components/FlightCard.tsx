@@ -51,18 +51,20 @@ export default function FlightCard({ flight }: FlightCardProps) {
                 <p className="text-xs text-slate-500 sm:text-sm">Price</p>
                 <p className="text-lg font-semibold text-slate-900 sm:text-xl">{formatCurrency(flight.price)}</p>
               </div>
-              <span className="rounded-full bg-brand/10 px-3 py-1 text-xs font-semibold text-brand">Preferred</span>
+              {flight.refundable && (
+                <span className="rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-700">Refundable</span>
+              )}
             </div>
           </div>
           <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-200 text-xs text-slate-600">
             <span className="inline-flex items-center gap-1">
-              <Sparkles size={14} /> Flexible
+              <Sparkles size={14} /> {flight.cabinClass.charAt(0).toUpperCase() + flight.cabinClass.slice(1).replace('_', ' ')}
             </span>
             <span className="inline-flex items-center gap-1">
-              <Globe size={14} /> {flight.rating.toFixed(1)}★
+              <Globe size={14} /> {flight.airline}
             </span>
             <span className="inline-flex items-center gap-1">
-              <Moon size={14} /> Night-friendly
+              <Moon size={14} /> {flight.stops}
             </span>
           </div>
         </div>

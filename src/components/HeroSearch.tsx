@@ -1,9 +1,11 @@
 import { motion } from "framer-motion";
-import { Search, Calendar, Users, MapPin } from "lucide-react";
+import { Search, Calendar, Users, AlertCircle } from "lucide-react";
 import Select from "./Select";
+import AirportInput from "./AirportInput";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useI18n } from "../i18n/I18nProvider";
+import { AIRPORTS } from "../constants/airports";
 
 const tabs = ["roundtrip", "oneway", "multicity"];
 
@@ -16,19 +18,73 @@ export default function HeroSearch() {
   const [ret, setRet] = useState("2026-07-27");
   const [travellers, setTravellers] = useState("2");
   const [cabin, setCabin] = useState("Premium Economy");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const validateInputs = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    // Validate departure city
+    if (!from.trim()) {
+      newErrors.from = "Departure city is required";
+    } else if (!AIRPORTS.find(a => a.city.toLowerCase() === from.toLowerCase())) {
+      newErrors.from = "Invalid departure city";
+    }
+
+    // Validate arrival city
+    if (!to.trim()) {
+      newErrors.to = "Arrival city is required";
+    } else if (!AIRPORTS.find(a => a.city.toLowerCase() === to.toLowerCase())) {
+      newErrors.to = "Invalid arrival city";
+    }
+
+    // Check if from and to are different
+    if (from.toLowerCase() === to.toLowerCase()) {
+      newErrors.to = "Departure and arrival cities must be different";
+    }
+
+    // Validate departure date
+    if (!depart) {
+      newErrors.depart = "Departure date is required";
+    } else if (new Date(depart) <= new Date()) {
+      newErrors.depart = "Departure date must be in the future";
+    }
+
+    // Validate return date if round trip
+    if (activeTab === "roundtrip") {
+      if (!ret) {
+        newErrors.ret = "Return date is required";
+      } else if (new Date(ret) <= new Date(depart)) {
+        newErrors.ret = "Return date must be after departure date";
+      }
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const navigate = useNavigate();
 
   const handleSearch = () => {
-    const params = new URLSearchParams({
+    if (!validateInputs()) {
+      return;
+    }
+
+    // Only include return date if it's a round trip
+    const params: Record<string, string> = {
       from,
       to,
       depart,
-      ret,
       travellers,
       cabin,
       trip: activeTab,
-    });
-    navigate(`/search?${params.toString()}`);
+    };
+    
+    if (activeTab === "roundtrip") {
+      params.ret = ret;
+    }
+    
+    const searchParams = new URLSearchParams(params);
+    navigate(`/search?${searchParams.toString()}`);
   };
 
   return (
@@ -67,50 +123,86 @@ export default function HeroSearch() {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <label className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
-            <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-              <MapPin size={16} /> {t("search.from")}
-            </span>
-            <input
+          <div>
+            <AirportInput
               value={from}
-              onChange={(e) => setFrom(e.target.value)}
-              className="mt-3 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+              onChange={(value) => {
+                setFrom(value);
+                setErrors(prev => ({ ...prev, from: '' }));
+              }}
+              label={t("search.from")}
               placeholder={t("search.from")}
             />
-          </label>
-          <label className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
-            <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-              <MapPin size={16} /> {t("search.to")}
-            </span>
-            <input
+            {errors.from && (
+              <p className="mt-2 flex items-center gap-1 text-xs text-red-600">
+                <AlertCircle size={14} /> {errors.from}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <AirportInput
               value={to}
-              onChange={(e) => setTo(e.target.value)}
-              className="mt-3 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+              onChange={(value) => {
+                setTo(value);
+                setErrors(prev => ({ ...prev, to: '' }));
+              }}
+              label={t("search.to")}
               placeholder={t("search.to")}
             />
-          </label>
-          <label className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
-            <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-              <Calendar size={16} /> {t("search.departure")}
-            </span>
-            <input
-              type="date"
-              value={depart}
-              onChange={(e) => setDepart(e.target.value)}
-              className="mt-3 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none"
-            />
-          </label>
-          <label className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
-            <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-              <Calendar size={16} /> {t("search.return")}
-            </span>
-            <input
-              type="date"
-              value={ret}
-              onChange={(e) => setRet(e.target.value)}
-              className="mt-3 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none"
-            />
-          </label>
+            {errors.to && (
+              <p className="mt-2 flex items-center gap-1 text-xs text-red-600">
+                <AlertCircle size={14} /> {errors.to}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <div className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
+              <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                <Calendar size={16} /> {t("search.departure")}
+              </span>
+              <input
+                type="date"
+                value={depart}
+                onChange={(e) => {
+                  setDepart(e.target.value);
+                  setErrors(prev => ({ ...prev, depart: '' }));
+                }}
+                className="mt-3 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none"
+              />
+            </div>
+            {errors.depart && (
+              <p className="mt-2 flex items-center gap-1 text-xs text-red-600">
+                <AlertCircle size={14} /> {errors.depart}
+              </p>
+            )}
+          </div>
+
+          {activeTab === "roundtrip" && (
+            <div>
+              <div className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
+                <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
+                  <Calendar size={16} /> {t("search.return")}
+                </span>
+                <input
+                  type="date"
+                  value={ret}
+                  onChange={(e) => {
+                    setRet(e.target.value);
+                    setErrors(prev => ({ ...prev, ret: '' }));
+                  }}
+                  className="mt-3 w-full bg-transparent text-lg font-semibold text-slate-900 outline-none"
+                />
+              </div>
+              {errors.ret && (
+                <p className="mt-2 flex items-center gap-1 text-xs text-red-600">
+                  <AlertCircle size={14} /> {errors.ret}
+                </p>
+              )}
+            </div>
+          )}
+
           <label className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
             <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
               <Users size={16} /> {t("search.travellers")}
@@ -127,6 +219,7 @@ export default function HeroSearch() {
               />
             </div>
           </label>
+
           <label className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
             <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
               <Search size={16} /> {t("search.cabin")}
