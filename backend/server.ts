@@ -1,13 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import { Duffel } from '@duffel/api';
-import type { SearchParams } from './src/types/index.js';
+import type { SearchParams } from '../frontend/src/types/index.js';
+import 'dotenv/config';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+const token = process.env.VITE_DUFFEL_TOKEN;
+
 const duffel = new Duffel({
-  token: process.env.VITE_DUFFEL_TOKEN||'',
+    token: token!,
 });
 
 // City to IATA code mapping
