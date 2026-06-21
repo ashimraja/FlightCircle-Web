@@ -5,8 +5,9 @@ import FlightCard from "../components/FlightCard";
 import FilterSidebar from "../components/FilterSidebar";
 import SortBar from "../components/SortBar";
 import SkeletonCard from "../components/SkeletonCard";
+import HeroSearch from "../components/HeroSearch";
 import type { Flight } from "../types";
-import { Filter, X } from "lucide-react";
+import { Filter, X, Search } from "lucide-react";
 import { useI18n } from "../i18n/I18nProvider";
 import { useLocation } from "react-router-dom";
 
@@ -175,8 +176,57 @@ export default function SearchResults() {
     travelClass: initialCabin,
   });
 
+  const hasSearchParams = !!(fromParam && toParam && departParam);
+  const tripParam = query.get("trip") || "roundtrip";
+
+  // When navigated directly without search params, show full search form
+  if (!hasSearchParams) {
+    return (
+      <div className="space-y-6 sm:space-y-8">
+        <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-soft sm:rounded-[2rem] sm:p-6">
+          <div className="flex flex-col items-center text-center gap-3 py-4 sm:py-8">
+            <div className="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-brand/10 text-brand sm:h-16 sm:w-16">
+              <Search size={28} />
+            </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-slate-900 sm:text-3xl">
+              {t("results.title")}
+            </h1>
+            <p className="max-w-md text-sm text-slate-500 sm:text-base">
+              Search from hundreds of flights between Nepal, Australia, and beyond. Enter your details below to get started.
+            </p>
+          </div>
+        </div>
+        <HeroSearch
+          initialValues={{
+            from: "",
+            to: "",
+            depart: "",
+            ret: "",
+            travellers: "1",
+            cabin: "Economy",
+            trip: "roundtrip",
+          }}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="space-y-6 sm:space-y-8">
+      {/* Compact search bar — collapsible, shows current search */}
+      <HeroSearch
+        compact
+        initialValues={{
+          from: fromParam,
+          to: toParam,
+          depart: departParam,
+          ret: retParam,
+          travellers: travellersParam,
+          cabin: initialCabin === "any" ? "Economy" : initialCabin,
+          trip: tripParam,
+        }}
+      />
+
       <div className="rounded-[1.5rem] border border-slate-200 bg-white p-4 shadow-soft sm:rounded-[2rem] sm:p-6">
         <div className="flex flex-col gap-3 sm:gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -210,6 +260,7 @@ export default function SearchResults() {
           </div>
         )}
       </div>
+
 
       <div className="grid gap-6 lg:grid-cols-[280px_1fr]">
         {/* Filter Sidebar - Hidden on mobile, visible on lg */}

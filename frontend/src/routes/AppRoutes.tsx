@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { Route, Routes, useLocation } from 'react-router-dom';
+import { useEffect } from 'react';
 import MainLayout from '../layouts/MainLayout';
 import Home from '../pages/Home';
 import SearchResults from '../pages/SearchResults';
@@ -17,34 +18,47 @@ const pageTransition = {
   exit: { opacity: 0, y: -24 },
 };
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+
+  return null;
+}
+
 export default function AppRoutes() {
   const location = useLocation();
 
   return (
-    <AnimatePresence mode="wait">
-      <motion.div
-        key={location.pathname}
-        initial="initial"
-        animate="animate"
-        exit="exit"
-        variants={pageTransition}
-        transition={{ duration: 0.35, ease: 'easeOut' }}
-        className="min-h-screen"
-      >
-        <Routes location={location} key={location.pathname}>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/search" element={<SearchResults />} />
-            <Route path="/details/:flightId" element={<FlightDetails />} />
-            <Route path="/traveller-details" element={<TravellerDetails />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/success" element={<Success />} />
-            <Route path="/deals" element={<Deals />} />
-            <Route path="/why" element={<Why />} />
-            <Route path="/testimonials" element={<Testimonials />} />
-          </Route>
-        </Routes>
-      </motion.div>
-    </AnimatePresence>
+    <>
+      <ScrollToTop />
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={location.pathname}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={pageTransition}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="min-h-screen"
+        >
+          <Routes location={location} key={location.pathname}>
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/search" element={<SearchResults />} />
+              <Route path="/details/:flightId" element={<FlightDetails />} />
+              <Route path="/traveller-details" element={<TravellerDetails />} />
+              <Route path="/payment" element={<Payment />} />
+              <Route path="/success" element={<Success />} />
+              <Route path="/deals" element={<Deals />} />
+              <Route path="/why" element={<Why />} />
+              <Route path="/testimonials" element={<Testimonials />} />
+            </Route>
+          </Routes>
+        </motion.div>
+      </AnimatePresence>
+    </>
   );
 }

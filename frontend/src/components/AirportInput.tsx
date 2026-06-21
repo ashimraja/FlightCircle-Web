@@ -86,11 +86,11 @@ export default function AirportInput({
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="group rounded-3xl border border-slate-200 bg-white p-4 transition hover:border-brand/60">
+      <div className="group rounded-2xl sm:rounded-3xl border border-slate-200 bg-white p-3 sm:p-4 transition hover:border-brand/60 overflow-hidden">
         <span className="flex items-center gap-2 text-sm font-semibold text-slate-700">
           <MapPin size={16} /> {label}
         </span>
-        <div className="mt-3 flex items-center gap-2">
+        <div className="mt-2 sm:mt-3 flex items-center gap-2">
           <input
             ref={inputRef}
             type="text"
@@ -99,7 +99,7 @@ export default function AirportInput({
             onFocus={() => setIsOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className="flex-1 bg-transparent text-lg font-semibold text-slate-900 outline-none placeholder:text-slate-400"
+            className="flex-1 min-w-0 bg-transparent text-base sm:text-lg font-semibold text-slate-900 outline-none placeholder:text-slate-400"
             autoComplete="off"
           />
           {selectedAirport && (
