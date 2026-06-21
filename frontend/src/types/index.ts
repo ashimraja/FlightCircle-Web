@@ -1,10 +1,3 @@
-// types/index.ts
-import { Duffel } from '@duffel/api';
-
-// Extract Offer type from the SDK without needing any sub-path import
-type _duffel = InstanceType<typeof Duffel>;
-export type DuffelOfferType = Awaited<ReturnType<_duffel['offers']['get']>>['data'];
-
 export type Flight = {
   id: string;
   airline: string;
